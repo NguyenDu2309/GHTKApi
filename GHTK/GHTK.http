@@ -1,6 +1,4 @@
 @GHTK_HostAddress = http://localhost:5199
 
-GET {{GHTK_HostAddress}}/weatherforecast/
-Accept: application/json
 
 ###
