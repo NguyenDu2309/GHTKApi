@@ -1,4 +1,6 @@
 
+using Ghtk.Authorization;
+
 namespace GHTK
 {
     public class Program
@@ -10,6 +12,13 @@ namespace GHTK
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddAuthentication("XClientSource").AddXClientSource(
+                options =>
+                {
+                    options.ClientSourceValidator = clientSource => clientSource == "ghtk";
+                }  
+            );
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
