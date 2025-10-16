@@ -4,6 +4,7 @@ namespace Ghtk.Authorization
 {
     public class XClientSourceAuthenticationHandlerOptions: AuthenticationSchemeOptions
     {
-        public Func<string?, bool> ClientSourceValidator { get; set; } = (clientSource) => false;
+        public Func<string, string, bool> ClientValidator { get; set; } = (clientSource, token) => false;
+        public string IssuerSigningKey { get; set; } = string.Empty;
     }
 }

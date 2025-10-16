@@ -15,7 +15,8 @@ namespace GHTK
             builder.Services.AddAuthentication("XClientSource").AddXClientSource(
                 options =>
                 {
-                    options.ClientSourceValidator = clientSource => clientSource == "ghtk";
+                    options.ClientValidator = (clientSource, token) => true;
+                    options.IssuerSigningKey = builder.Configuration["IssuerSigningKey"] ?? "";
                 }  
             );
 

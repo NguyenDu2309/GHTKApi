@@ -1,8 +1,11 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Ghtk.Authorization
 {
@@ -14,33 +17,85 @@ namespace Ghtk.Authorization
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if(Options.ClientSourceValidator == null)
+            if (Options.ClientValidator == null)
             {
                 return Task.FromResult(AuthenticateResult.Fail("ClientSourceValidator is not configured"));
             }
 
             var clientSource = Context.Request.Headers["X-Client-Source"];
-            if(clientSource.Count == 0)
+            var token = Context.Request.Headers["Token"];
+            if (clientSource.Count == 0)
             {
-                return Task.FromResult(AuthenticateResult.Fail("Missing X-Client-Source"));
+                return Task.FromResult(AuthenticateResult.Fail("Missing X-Client-Source header"));
             }
+            if (token.Count == 0)
+            {
+                return Task.FromResult(AuthenticateResult.Fail("Missing Token header"));
+            }
+
 
             var clientSourceValue = clientSource.FirstOrDefault();
-
-            if (clientSourceValue == null)
+            var tokenValue = clientSource.FirstOrDefault();
+            if (!string.IsNullOrEmpty(clientSourceValue) &&
+                !string.IsNullOrEmpty(tokenValue) &&
+                VerifyClient(clientSourceValue, tokenValue))
             {
-                return Task.FromResult(AuthenticateResult.Fail("Multiple X-Client-Source"));
+                var identity = new ClaimsIdentity(Scheme.Name);
+                identity.AddClaim(new Claim(ClaimTypes.Name, clientSourceValue));
+                var principal = new ClaimsPrincipal(identity);
+                var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+                return Task.FromResult(AuthenticateResult.Success(ticket));
             }
-            if (!Options.ClientSourceValidator(clientSourceValue)){
-                return Task.FromResult(AuthenticateResult.Fail("Invalid X-Client-Source"));
+            else
+            {
+                return Task.FromResult(AuthenticateResult.Fail("Invalid Token"));
+            }
+        }
+
+        private bool VerifyClient(string clientSourceValue, string tokenValue)
+        {
+            if (!Validate(tokenValue, out var token, out var principal))
+            {
+                return false;
             }
 
-            var identity = new ClaimsIdentity(Scheme.Name);
-            identity.AddClaim(new Claim(ClaimTypes.Name, clientSourceValue));
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+            if (clientSourceValue != principal?.Identity?.Name)
+            {
+                return false;
+            }
 
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+            if (!Options.ClientValidator(clientSourceValue, tokenValue))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool Validate(string tokenValue, out SecurityToken? token, out ClaimsPrincipal? claimsPrincipal)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var tokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Options.IssuerSigningKey)),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ClockSkew = TimeSpan.Zero,
+            };
+
+            try
+            {
+                claimsPrincipal = handler.ValidateToken(tokenValue, tokenValidationParameters, out token);
+                return true;
+            }
+            catch (Exception)
+            {
+                token = null;
+                claimsPrincipal = null;
+                return false;
+            }
         }
     }
 }
