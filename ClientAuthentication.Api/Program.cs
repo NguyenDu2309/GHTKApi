@@ -8,8 +8,16 @@ namespace ClientAuthentication.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSingleton<IClientSourceAuthencitationHandler>(
+                serviceProvider =>
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("ClientAuthentication" ?? throw new Exception("ClientAuthentication database cannot be found"));
+                    return new SqlServerClientSourceAuthencitationHandler(connectionString);
+                }
+            );
 
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

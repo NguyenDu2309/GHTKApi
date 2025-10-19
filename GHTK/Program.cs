@@ -1,6 +1,7 @@
 
 using ClientAuthentication;
 using Ghtk.Authorization;
+using GHTK.Api.AuthenticationHandler;
 
 namespace GHTK.Api
 {
@@ -9,7 +10,7 @@ namespace GHTK.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            IClientSourceAuthencitationHandler clientSourceAuthencitationHandler = new SqlServerClientSourceAuthencitationHandler(builder.Configuration.GetConnectionString("ClientAuthentication") ?? throw new Exception("ClientAuthentication database cannot be found"));
+            IClientSourceAuthencitationHandler clientSourceAuthencitationHandler = new RemoteClientSourceAuthencitationHandler(builder.Configuration["AuthenticationService"] ?? throw new Exception("AuthenticationService Url cannot be found"));
             // Add services to the container.
 
             builder.Services.AddControllers();
