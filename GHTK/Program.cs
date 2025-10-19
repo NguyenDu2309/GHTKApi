@@ -1,21 +1,22 @@
 
+using ClientAuthentication;
 using Ghtk.Authorization;
 
-namespace GHTK
+namespace GHTK.Api
 {
     public class Program
     {
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            IClientSourceAuthencitationHandler clientSourceAuthencitationHandler = new SqlServerClientSourceAuthencitationHandler(builder.Configuration.GetConnectionString("ClientAuthentication") ?? throw new Exception("ClientAuthentication database cannot be found"));
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Services.AddAuthentication("XClientSource").AddXClientSource(
+            builder.Services.AddAuthentication("X-Client-Source").AddXClientSource(
                 options =>
                 {
-                    options.ClientValidator = (clientSource, token, principal) => true;
+                    options.ClientValidator = (clientSource, token, principal) => clientSourceAuthencitationHandler.Validate(clientSource);
                     options.IssuerSigningKey = builder.Configuration["IssuerSigningKey"] ?? "";
                 }  
             );

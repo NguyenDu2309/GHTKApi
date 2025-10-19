@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHTK", "GHTK\GHTK.csproj", "{C19292CD-35BC-4781-99A7-7C61EA6D036B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHTK.Api", "GHTK\GHTK.Api.csproj", "{C19292CD-35BC-4781-99A7-7C61EA6D036B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghtk.Authorization", "Ghtk.Authorization\Ghtk.Authorization.csproj", "{66EB44FD-456F-4004-8896-DB1BF33986C7}"
 EndProject

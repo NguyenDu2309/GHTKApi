@@ -1,8 +1,8 @@
-﻿using GHTK.Models;
+﻿using GHTK.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GHTK.Controllers
+namespace GHTK.Api.Controllers
 {
     [ApiController]
     [Route("/services/shipment")]

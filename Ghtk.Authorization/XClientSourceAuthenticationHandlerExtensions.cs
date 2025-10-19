@@ -6,7 +6,7 @@ namespace Ghtk.Authorization
     {
         public static AuthenticationBuilder AddXClientSource(this AuthenticationBuilder builder, Action<XClientSourceAuthenticationHandlerOptions> configureOptions)
         {
-           return builder.AddScheme<XClientSourceAuthenticationHandlerOptions, XClientSourceAuthenticationHandler>("XClientSource", configureOptions);
+           return builder.AddScheme<XClientSourceAuthenticationHandlerOptions, XClientSourceAuthenticationHandler>("X-Client-Source", configureOptions);
         }           
     }
 }

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ClientAuthentication\ClientAuthentication.csproj" />
     <ProjectReference Include="..\Ghtk.Authorization\Ghtk.Authorization.csproj" />
   </ItemGroup>
 
