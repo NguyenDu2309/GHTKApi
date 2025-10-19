@@ -15,7 +15,23 @@ namespace GHTK.Api.Controllers
         [HttpPost]
         [Route("order")]
         [Authorize]
-        public IActionResult CreateOrder([FromBody] CreateOrder shipment)
+        public IActionResult SubmitOrder([FromBody] SubmitOrderModel order)
+        {
+            return Ok();
+        }
+        [HttpGet]
+        [Route("v2/{id}")]
+        [Authorize]
+
+        public IActionResult GetOrderStatus(int id)
+        {
+            return Ok();
+        }
+        [HttpPost]
+        [Route("cancel/{id}")]
+        [Authorize]
+
+        public IActionResult CancelOrderStatus(int id)
         {
             return Ok();
         }
