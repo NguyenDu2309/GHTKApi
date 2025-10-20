@@ -1,6 +1,8 @@
 
 using ClientAuthentication;
+using Ghtk.Api;
 using Ghtk.Authorization;
+using Ghtk.Respository;
 using GHTK.Api.AuthenticationHandler;
 
 namespace GHTK.Api
@@ -21,7 +23,8 @@ namespace GHTK.Api
                     options.IssuerSigningKey = builder.Configuration["IssuerSigningKey"] ?? "";
                 }  
             );
-
+            builder.Services.AddMongoDbClient(builder.Configuration);
+            builder.Services.AddScoped<IOrderRepository, MongodbOrderReposotory>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

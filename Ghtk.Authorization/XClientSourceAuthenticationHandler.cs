@@ -43,6 +43,7 @@ namespace Ghtk.Authorization
                 //var identity = new ClaimsIdentity(Scheme.Name);
                 //identity.AddClaim(new Claim(ClaimTypes.Name, clientSourceValue));
                 //var principal = new ClaimsPrincipal(identity);
+                ((ClaimsIdentity)principal!.Identity!).AddClaim(new Claim("PartnerId", clientSourceValue));
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
                 return Task.FromResult(AuthenticateResult.Success(ticket));
